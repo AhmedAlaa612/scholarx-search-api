@@ -1,0 +1,1472 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Scholarship Search</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --white: #ffffff;
+        --baby-blue: #a8d8ea;
+        --baby-blue-light: #c9e9f6;
+        --baby-blue-dark: #7bbfd6;
+        --baby-blue-accent: #5ba3c4;
+        --text-dark: #1a2332;
+        --text-medium: #4a5568;
+        --text-light: #718096;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 2px 8px rgba(168, 216, 234, 0.1);
+        --shadow-md: 0 8px 24px rgba(168, 216, 234, 0.15);
+        --shadow-lg: 0 16px 48px rgba(168, 216, 234, 0.2);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #f0f9ff 50%,
+          #e6f4fa 100%
+        );
+        color: var(--text-dark);
+        line-height: 1.6;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Animated background particles */
+      .bg-particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        background: var(--baby-blue-light);
+        border-radius: 50%;
+        opacity: 0.3;
+        animation: float 20s infinite ease-in-out;
+      }
+
+      .particle:nth-child(1) {
+        width: 80px;
+        height: 80px;
+        top: 10%;
+        left: 10%;
+        animation-delay: 0s;
+      }
+      .particle:nth-child(2) {
+        width: 120px;
+        height: 120px;
+        top: 60%;
+        left: 80%;
+        animation-delay: 4s;
+      }
+      .particle:nth-child(3) {
+        width: 60px;
+        height: 60px;
+        top: 80%;
+        left: 20%;
+        animation-delay: 8s;
+      }
+      .particle:nth-child(4) {
+        width: 100px;
+        height: 100px;
+        top: 30%;
+        left: 70%;
+        animation-delay: 12s;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        25% {
+          transform: translate(20px, -30px) scale(1.1);
+        }
+        50% {
+          transform: translate(-20px, 20px) scale(0.9);
+        }
+        75% {
+          transform: translate(30px, 10px) scale(1.05);
+        }
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 60px 24px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Language Toggle at Top */
+      .top-language-toggle {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-bottom: 40px;
+        animation: fadeInDown 0.6s ease-out;
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        margin-bottom: 60px;
+        animation: fadeInDown 0.8s ease-out;
+      }
+
+      .header h1 {
+        font-family: "Sora", sans-serif;
+        font-size: 3.5rem;
+        font-weight: 700;
+        background: linear-gradient(
+          135deg,
+          var(--baby-blue-dark) 0%,
+          var(--baby-blue-accent) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 16px;
+        letter-spacing: -0.02em;
+      }
+
+      .header p {
+        font-size: 1.25rem;
+        color: var(--text-medium);
+        font-weight: 400;
+      }
+
+      /* Search Section */
+      .search-section {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 48px;
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 48px;
+        border: 1px solid var(--baby-blue-light);
+        animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .search-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--baby-blue) 0%,
+          var(--baby-blue-accent) 100%
+        );
+      }
+
+      .lang-btn {
+        padding: 10px 24px;
+        border: 2px solid var(--baby-blue);
+        background: var(--white);
+        color: var(--text-dark);
+        font-family: "Sora", sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .lang-btn::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: var(--baby-blue);
+        transition:
+          width 0.4s,
+          height 0.4s,
+          top 0.4s,
+          left 0.4s;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+      }
+
+      .lang-btn:hover::before {
+        width: 300px;
+        height: 300px;
+      }
+
+      .lang-btn.active {
+        background: var(--baby-blue);
+        color: var(--white);
+        border-color: var(--baby-blue-accent);
+      }
+
+      .search-box {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .search-textarea {
+        width: 100%;
+        min-height: 150px;
+        padding: 24px;
+        font-size: 1.1rem;
+        border: 2px solid var(--baby-blue-light);
+        border-radius: 16px;
+        font-family: "DM Sans", sans-serif;
+        transition: all 0.3s ease;
+        background: #fafcfe;
+        resize: vertical;
+        line-height: 1.6;
+      }
+
+      .search-textarea:focus {
+        outline: none;
+        border-color: var(--baby-blue-accent);
+        background: var(--white);
+        box-shadow: 0 0 0 4px rgba(168, 216, 234, 0.1);
+      }
+
+      .search-btn {
+        padding: 18px 40px;
+        background: linear-gradient(
+          135deg,
+          var(--baby-blue) 0%,
+          var(--baby-blue-accent) 100%
+        );
+        color: var(--white);
+        border: none;
+        border-radius: 12px;
+        font-family: "Sora", sans-serif;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(168, 216, 234, 0.3);
+        align-self: center;
+      }
+
+      .search-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 24px rgba(168, 216, 234, 0.4);
+      }
+
+      .search-btn:active {
+        transform: scale(0.98);
+      }
+
+      /* Loading Animation */
+      .loading-container {
+        display: none;
+        text-align: center;
+        padding: 80px 40px;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      .loading-container.active {
+        display: block;
+      }
+
+      .ai-cooking {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto 32px;
+        position: relative;
+      }
+
+      .chef-hat {
+        width: 100px;
+        height: 80px;
+        background: var(--white);
+        border: 4px solid var(--baby-blue);
+        border-radius: 50% 50% 0 0;
+        margin: 0 auto;
+        position: relative;
+        animation: bounce 2s infinite;
+      }
+
+      .chef-hat::before {
+        content: "";
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 40px;
+        background: var(--baby-blue);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      .cooking-items {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      .cooking-item {
+        width: 16px;
+        height: 16px;
+        background: var(--baby-blue);
+        border-radius: 50%;
+        animation: cookingJump 1.4s infinite ease-in-out;
+      }
+
+      .cooking-item:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .cooking-item:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .cooking-item:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: translateX(-50%) scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: translateX(-50%) scale(1.2);
+          opacity: 0.8;
+        }
+      }
+
+      @keyframes cookingJump {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-30px);
+        }
+      }
+
+      .loading-text {
+        font-family: "Sora", sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--baby-blue-accent);
+        margin-bottom: 12px;
+      }
+
+      .loading-subtext {
+        color: var(--text-medium);
+        font-size: 1rem;
+      }
+
+      /* Filters */
+      .filters-section {
+        display: none;
+        background: var(--white);
+        border-radius: 20px;
+        padding: 32px;
+        margin-bottom: 32px;
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--baby-blue-light);
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      .filters-section.active {
+        display: block;
+      }
+
+      .filters-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .filters-title {
+        font-family: "Sora", sans-serif;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      .clear-filters {
+        padding: 8px 20px;
+        background: transparent;
+        color: var(--baby-blue-accent);
+        border: 1px solid var(--baby-blue);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .clear-filters:hover {
+        background: var(--baby-blue-light);
+      }
+
+      .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .filter-label {
+        font-weight: 600;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+      }
+
+      .filter-select {
+        padding: 12px 16px;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.95rem;
+        background: var(--white);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .filter-select:focus {
+        outline: none;
+        border-color: var(--baby-blue);
+        box-shadow: 0 0 0 3px rgba(168, 216, 234, 0.1);
+      }
+
+      /* Results */
+      .results-section {
+        display: none;
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      .results-section.active {
+        display: block;
+      }
+
+      .results-header {
+        margin-bottom: 32px;
+      }
+
+      .results-count {
+        font-family: "Sora", sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+      }
+
+      .opportunity-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 32px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .opportunity-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(168, 216, 234, 0.1),
+          transparent
+        );
+        transition: left 0.6s;
+      }
+
+      .opportunity-card:hover::before {
+        left: 100%;
+      }
+
+      .opportunity-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--baby-blue);
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 20px;
+        gap: 16px;
+      }
+
+      .card-title {
+        font-family: "Sora", sans-serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        line-height: 1.3;
+        flex: 1;
+      }
+
+      .card-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        background: var(--baby-blue-light);
+        color: var(--baby-blue-accent);
+        white-space: nowrap;
+      }
+
+      .badge.fully-funded {
+        background: #d1fae5;
+        color: #059669;
+      }
+
+      .card-description {
+        color: var(--text-medium);
+        margin-bottom: 20px;
+        line-height: 1.7;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .card-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+        margin-bottom: 20px;
+      }
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-medium);
+        font-size: 0.9rem;
+      }
+
+      .meta-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--baby-blue-accent);
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 12px;
+        padding-top: 16px;
+      }
+
+      .card-btn {
+        flex: 1;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-family: "Sora", sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .card-btn-bookmark {
+        background: var(--white);
+        color: var(--baby-blue-accent);
+        border: 2px solid var(--baby-blue);
+      }
+
+      .card-btn-bookmark:hover {
+        background: var(--baby-blue-light);
+        transform: translateY(-2px);
+      }
+
+      .card-btn-ai {
+        background: linear-gradient(
+          135deg,
+          var(--baby-blue) 0%,
+          var(--baby-blue-accent) 100%
+        );
+        color: var(--white);
+        box-shadow: 0 2px 8px rgba(168, 216, 234, 0.3);
+      }
+
+      .card-btn-ai:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(168, 216, 234, 0.4);
+      }
+
+      .card-btn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(26, 35, 50, 0.7);
+        backdrop-filter: blur(8px);
+        z-index: 1000;
+        padding: 40px 20px;
+        overflow-y: auto;
+        animation: fadeIn 0.3s ease-out;
+      }
+
+      .modal.active {
+        display: flex;
+        justify-content: center;
+        align-items: start;
+      }
+
+      .modal-content {
+        background: var(--white);
+        border-radius: 24px;
+        max-width: 900px;
+        width: 100%;
+        margin: auto;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+        animation: slideUp 0.4s ease-out;
+        position: relative;
+      }
+
+      .modal-header {
+        padding: 40px 40px 32px;
+        border-bottom: 2px solid var(--baby-blue-light);
+        position: relative;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: var(--baby-blue-light);
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: var(--baby-blue-accent);
+        transition: all 0.3s ease;
+      }
+
+      .modal-close:hover {
+        background: var(--baby-blue);
+        transform: rotate(90deg);
+      }
+
+      .modal-title {
+        font-family: "Sora", sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 16px;
+        padding-right: 50px;
+      }
+
+      .modal-body {
+        padding: 40px;
+        max-height: 60vh;
+        overflow-y: auto;
+      }
+
+      .modal-section {
+        margin-bottom: 32px;
+      }
+
+      .modal-section-title {
+        font-family: "Sora", sans-serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--baby-blue-accent);
+        margin-bottom: 12px;
+      }
+
+      .modal-section-content {
+        color: var(--text-medium);
+        line-height: 1.8;
+      }
+
+      .benefits-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .benefits-list li {
+        padding: 12px 0;
+        padding-left: 32px;
+        position: relative;
+        color: var(--text-medium);
+      }
+
+      .benefits-list li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: var(--baby-blue-accent);
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        background: #f8fbfd;
+        padding: 24px;
+        border-radius: 16px;
+        margin-top: 20px;
+      }
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .info-label {
+        font-size: 0.85rem;
+        color: var(--text-light);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .info-value {
+        font-size: 1rem;
+        color: var(--text-dark);
+        font-weight: 500;
+      }
+
+      .modal-actions {
+        padding: 24px 40px;
+        border-top: 2px solid var(--baby-blue-light);
+        display: flex;
+        gap: 16px;
+        justify-content: flex-end;
+      }
+
+      .btn {
+        padding: 14px 32px;
+        border-radius: 12px;
+        font-family: "Sora", sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--baby-blue) 0%,
+          var(--baby-blue-accent) 100%
+        );
+        color: var(--white);
+        box-shadow: 0 4px 16px rgba(168, 216, 234, 0.3);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(168, 216, 234, 0.4);
+      }
+
+      .btn-secondary {
+        background: var(--white);
+        color: var(--baby-blue-accent);
+        border: 2px solid var(--baby-blue);
+      }
+
+      .btn-secondary:hover {
+        background: var(--baby-blue-light);
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2.5rem;
+        }
+
+        .search-section {
+          padding: 32px 24px;
+        }
+
+        .search-textarea {
+          min-height: 120px;
+          padding: 20px;
+          font-size: 1rem;
+        }
+
+        .search-btn {
+          align-self: stretch;
+          width: 100%;
+        }
+
+        .modal-content {
+          margin: 20px auto;
+        }
+
+        .modal-header,
+        .modal-body,
+        .modal-actions {
+          padding: 24px;
+        }
+
+        .filters-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .results-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .top-language-toggle {
+          justify-content: center;
+        }
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--baby-blue-light);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--baby-blue);
+        border-radius: 5px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--baby-blue-accent);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Background Particles -->
+    <div class="bg-particles">
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+    </div>
+
+    <div class="container">
+      <!-- Language Toggle at Top -->
+      <div class="top-language-toggle">
+        <button class="lang-btn active" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="ar">العربية</button>
+      </div>
+
+      <!-- Header -->
+      <div class="header">
+        <h1>AI Scholarship Finder</h1>
+        <p>Discover your perfect opportunity with intelligent search</p>
+      </div>
+
+      <!-- Search Section -->
+      <div class="search-section">
+        <div class="search-box">
+          <textarea
+            class="search-textarea"
+            placeholder="Describe your ideal scholarship opportunity in detail... 
+
+For example: 'I'm looking for a fully-funded master's scholarship in computer science in Europe for international students. I have a 3.7 GPA and am interested in AI research.'"
+            id="searchInput"
+          ></textarea>
+          <button class="search-btn" id="searchBtn">
+            Find My Opportunities
+          </button>
+        </div>
+
+        <!-- Loading Animation -->
+        <div class="loading-container" id="loadingContainer">
+          <div class="ai-cooking">
+            <div class="chef-hat"></div>
+            <div class="cooking-items">
+              <div class="cooking-item"></div>
+              <div class="cooking-item"></div>
+              <div class="cooking-item"></div>
+            </div>
+          </div>
+          <div class="loading-text">AI Expert is Cooking...</div>
+          <div class="loading-subtext">
+            Searching through thousands of opportunities
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-section" id="filtersSection">
+        <div class="filters-header">
+          <h3 class="filters-title">Refine Your Search</h3>
+          <button class="clear-filters" id="clearFilters">Clear All</button>
+        </div>
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label class="filter-label">Category</label>
+            <select class="filter-select" id="categoryFilter">
+              <option value="">All Categories</option>
+              <option value="academic">Academic</option>
+              <option value="non_academic">Non-Academic</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Type</label>
+            <select class="filter-select" id="typeFilter">
+              <option value="">All Types</option>
+              <option value="masters">Masters</option>
+              <option value="bachelor">Bachelor</option>
+              <option value="phd">PhD</option>
+              <option value="conference">Conference</option>
+              <option value="exchange">Exchange</option>
+              <option value="prize">Prize</option>
+              <option value="internship">Internship</option>
+              <option value="camp">Camp</option>
+              <option value="volunteering">Volunteering</option>
+              <option value="workshop">Workshop</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Funding Type</label>
+            <select class="filter-select" id="fundingFilter">
+              <option value="">All Funding</option>
+              <option value="fully_funded">Fully Funded</option>
+              <option value="partially_funded">Partially Funded</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Target Segment</label>
+            <select class="filter-select" id="segmentFilter">
+              <option value="">All Segments</option>
+              <option value="high school">High School</option>
+              <option value="undergraduate">Undergraduate</option>
+              <option value="graduate">Graduate</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="results-section" id="resultsSection">
+        <div class="results-header">
+          <h2 class="results-count" id="resultsCount">
+            12 Opportunities Found
+          </h2>
+        </div>
+        <div class="results-grid" id="resultsGrid">
+          <!-- Results will be populated here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="opportunityModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="modal-close" id="modalClose">&times;</button>
+          <h2 class="modal-title" id="modalTitle"></h2>
+          <div class="card-badges" id="modalBadges"></div>
+        </div>
+        <div class="modal-body" id="modalBody">
+          <!-- Modal content will be populated here -->
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"
+              ></path>
+            </svg>
+            Bookmark
+          </button>
+          <button class="btn btn-primary">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              ></path>
+            </svg>
+            Ask AI
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE = "";
+
+      // State
+      let currentLanguage = "en";
+      let allOpportunities = []; // raw results from API
+      let filteredOpportunities = [];
+
+      // DOM Elements
+      const searchInput = document.getElementById("searchInput");
+      const searchBtn = document.getElementById("searchBtn");
+      const loadingContainer = document.getElementById("loadingContainer");
+      const filtersSection = document.getElementById("filtersSection");
+      const resultsSection = document.getElementById("resultsSection");
+      const resultsGrid = document.getElementById("resultsGrid");
+      const resultsCount = document.getElementById("resultsCount");
+      const modal = document.getElementById("opportunityModal");
+      const modalClose = document.getElementById("modalClose");
+      const clearFilters = document.getElementById("clearFilters");
+
+      // Language toggle
+      document.querySelectorAll(".lang-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          document
+            .querySelectorAll(".lang-btn")
+            .forEach((b) => b.classList.remove("active"));
+          this.classList.add("active");
+          currentLanguage = this.dataset.lang;
+        });
+      });
+
+      // Search
+      searchBtn.addEventListener("click", performSearch);
+      searchInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter" && e.ctrlKey) performSearch();
+      });
+
+      async function performSearch() {
+        const query = searchInput.value.trim();
+        if (!query) return;
+
+        loadingContainer.classList.add("active");
+        filtersSection.classList.remove("active");
+        resultsSection.classList.remove("active");
+
+        try {
+          const res = await fetch(`${API_BASE}/api/search`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ query, lang: currentLanguage, limit: 20 }),
+          });
+
+          if (!res.ok) throw new Error(`API error: ${res.status}`);
+          const data = await res.json();
+
+          // Normalize: each hit has { id, score, opportunity: {...} }
+          allOpportunities = data.results.map((hit) => ({
+            ...hit.opportunity,
+            _id: hit.id,
+            _score: hit.score,
+          }));
+          filteredOpportunities = [...allOpportunities];
+
+          loadingContainer.classList.remove("active");
+          filtersSection.classList.add("active");
+          resultsSection.classList.add("active");
+          renderResults(filteredOpportunities);
+        } catch (err) {
+          loadingContainer.classList.remove("active");
+          console.error("Search failed:", err);
+          resultsSection.classList.add("active");
+          resultsGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:#e53e3e;font-size:1.1rem;">Search failed. Please try again.</p>`;
+          resultsCount.textContent = "";
+        }
+      }
+
+      // Safe accessors (handle missing/null fields gracefully)
+      function arr(v) {
+        return Array.isArray(v) ? v : [];
+      }
+      function str(v) {
+        return v ?? "";
+      }
+      function obj(v) {
+        return v && typeof v === "object" && !Array.isArray(v) ? v : {};
+      }
+
+      // Render results
+      function renderResults(opportunities) {
+        resultsCount.textContent = `${opportunities.length} Opportunit${opportunities.length === 1 ? "y" : "ies"} Found`;
+
+        if (opportunities.length === 0) {
+          resultsGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--text-medium);font-size:1.1rem;">No opportunities matched your search.</p>`;
+          return;
+        }
+
+        resultsGrid.innerHTML = opportunities
+          .map((opp, index) => {
+            const type = obj(opp.type);
+            const subtypes = arr(type.subtype);
+            const fundType = arr(opp.fund_type);
+            const countries = arr(opp.country);
+
+            return `
+                <div class="opportunity-card">
+                    <div onclick="showOpportunityModal(${index})">
+                        <div class="card-header">
+                            <h3 class="card-title">${str(opp.title)}</h3>
+                        </div>
+                        <div class="card-badges">
+                            ${subtypes.map((t) => `<span class="badge">${t}</span>`).join("")}
+                            ${fundType.includes("fully_funded") ? '<span class="badge fully-funded">Fully Funded</span>' : ""}
+                        </div>
+                        <p class="card-description">${str(opp.description)}</p>
+                        <div class="card-meta">
+                            ${
+                              countries.length
+                                ? `
+                            <div class="meta-item">
+                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                <span>${countries.join(", ")}</span>
+                            </div>`
+                                : ""
+                            }
+                            ${
+                              opp.deadline
+                                ? `
+                            <div class="meta-item">
+                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span>Deadline: ${formatDate(opp.deadline)}</span>
+                            </div>`
+                                : ""
+                            }
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="card-btn card-btn-bookmark" onclick="event.stopPropagation(); bookmarkOpportunity(${index})">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                            </svg>
+                            Bookmark
+                        </button>
+                        <button class="card-btn card-btn-ai" onclick="event.stopPropagation(); askAIAbout(${index})">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                            Ask AI
+                        </button>
+                    </div>
+                </div>`;
+          })
+          .join("");
+      }
+
+      // Format date
+      function formatDate(dateString) {
+        if (!dateString) return "N/A";
+        const date = new Date(dateString);
+        if (isNaN(date)) return dateString;
+        return date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
+
+      // Show modal
+      function showOpportunityModal(index) {
+        const opp = filteredOpportunities[index];
+        const type = obj(opp.type);
+        const subtypes = arr(type.subtype);
+        const fundType = arr(opp.fund_type);
+        const benefits = arr(opp.benefits);
+        const docsRequired = arr(opp.documents_required);
+        const langReqs = obj(opp.language_requirements);
+        const eligNat = opp.eligible_nationalities;
+
+        document.getElementById("modalTitle").textContent = str(opp.title);
+        document.getElementById("modalBadges").innerHTML = `
+                ${subtypes.map((t) => `<span class="badge">${t}</span>`).join("")}
+                ${fundType.includes("fully_funded") ? '<span class="badge fully-funded">Fully Funded</span>' : ""}
+            `;
+
+        document.getElementById("modalBody").innerHTML = `
+                <div class="modal-section">
+                    <h4 class="modal-section-title">Description</h4>
+                    <p class="modal-section-content">${str(opp.description)}</p>
+                </div>
+
+                ${
+                  benefits.length
+                    ? `
+                <div class="modal-section">
+                    <h4 class="modal-section-title">Benefits</h4>
+                    <ul class="benefits-list">
+                        ${benefits.map((b) => `<li>${b}</li>`).join("")}
+                    </ul>
+                </div>`
+                    : ""
+                }
+
+                ${
+                  opp.eligibility
+                    ? `
+                <div class="modal-section">
+                    <h4 class="modal-section-title">Eligibility</h4>
+                    <p class="modal-section-content">${opp.eligibility}</p>
+                </div>`
+                    : ""
+                }
+
+                <div class="info-grid">
+                    ${opp.duration ? `<div class="info-item"><span class="info-label">Duration</span><span class="info-value">${opp.duration}</span></div>` : ""}
+                    ${opp.deadline ? `<div class="info-item"><span class="info-label">Deadline</span><span class="info-value">${formatDate(opp.deadline)}</span></div>` : ""}
+                    ${opp.location ? `<div class="info-item"><span class="info-label">Location</span><span class="info-value">${opp.location}</span></div>` : ""}
+                    ${opp.gpa ? `<div class="info-item"><span class="info-label">Min GPA</span><span class="info-value">${opp.gpa}</span></div>` : ""}
+                    ${opp.is_remote != null ? `<div class="info-item"><span class="info-label">Remote</span><span class="info-value">${opp.is_remote ? "Yes" : "No"}</span></div>` : ""}
+                    <div class="info-item">
+                        <span class="info-label">Eligible Nationalities</span>
+                        <span class="info-value">${eligNat === "all" ? "All" : Array.isArray(eligNat) ? eligNat.join(", ") : str(eligNat)}</span>
+                    </div>
+                </div>
+
+                ${
+                  Object.keys(langReqs).length > 0
+                    ? `
+                <div class="modal-section">
+                    <h4 class="modal-section-title">Language Requirements</h4>
+                    <div class="info-grid">
+                        ${Object.entries(langReqs)
+                          .map(
+                            ([exam, score]) => `
+                            <div class="info-item">
+                                <span class="info-label">${exam}</span>
+                                <span class="info-value">${score}</span>
+                            </div>
+                        `,
+                          )
+                          .join("")}
+                    </div>
+                </div>`
+                    : ""
+                }
+
+                ${
+                  docsRequired.length
+                    ? `
+                <div class="modal-section">
+                    <h4 class="modal-section-title">Required Documents</h4>
+                    <ul class="benefits-list">
+                        ${docsRequired.map((doc) => `<li>${doc}</li>`).join("")}
+                    </ul>
+                </div>`
+                    : ""
+                }
+
+                ${
+                  opp.application_link
+                    ? `
+                <div class="modal-section" style="text-align:center;padding-top:8px;">
+                    <a href="${opp.application_link}" target="_blank" rel="noopener" class="btn btn-primary" style="display:inline-flex;text-decoration:none;">
+                        Apply Now &rarr;
+                    </a>
+                </div>`
+                    : ""
+                }
+            `;
+
+        modal.classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+
+      // Close modal
+      modalClose.addEventListener("click", closeModal);
+      modal.addEventListener("click", function (e) {
+        if (e.target === modal) closeModal();
+      });
+
+      function closeModal() {
+        modal.classList.remove("active");
+        document.body.style.overflow = "auto";
+      }
+
+      // Filters (client-side on search results)
+      const categoryFilter = document.getElementById("categoryFilter");
+      const typeFilter = document.getElementById("typeFilter");
+      const fundingFilter = document.getElementById("fundingFilter");
+      const segmentFilter = document.getElementById("segmentFilter");
+
+      [categoryFilter, typeFilter, fundingFilter, segmentFilter].forEach(
+        (f) => {
+          f.addEventListener("change", applyFilters);
+        },
+      );
+
+      function applyFilters() {
+        filteredOpportunities = allOpportunities.filter((opp) => {
+          const type = obj(opp.type);
+          const categoryMatch =
+            !categoryFilter.value || type.category === categoryFilter.value;
+          const typeMatch =
+            !typeFilter.value || arr(type.subtype).includes(typeFilter.value);
+          const fundingMatch =
+            !fundingFilter.value ||
+            arr(opp.fund_type).includes(fundingFilter.value);
+          const segmentMatch =
+            !segmentFilter.value ||
+            arr(opp.target_segment).includes(segmentFilter.value);
+          return categoryMatch && typeMatch && fundingMatch && segmentMatch;
+        });
+        renderResults(filteredOpportunities);
+      }
+
+      clearFilters.addEventListener("click", function () {
+        categoryFilter.value = "";
+        typeFilter.value = "";
+        fundingFilter.value = "";
+        segmentFilter.value = "";
+        filteredOpportunities = [...allOpportunities];
+        renderResults(filteredOpportunities);
+      });
+
+      // Placeholder actions
+      function bookmarkOpportunity(index) {
+        console.log("Bookmarked:", filteredOpportunities[index].title);
+      }
+      function askAIAbout(index) {
+        console.log("Ask AI:", filteredOpportunities[index].title);
+      }
+
+      window.showOpportunityModal = showOpportunityModal;
+      window.bookmarkOpportunity = bookmarkOpportunity;
+      window.askAIAbout = askAIAbout;
+    </script>
+  </body>
+</html>
