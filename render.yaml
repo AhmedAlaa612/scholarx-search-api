@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: scholarx-search-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.6"
+      - key: PORT
+        generateValue: false
+      - key: APP_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: INFO
+      - key: QDRANT_API_KEY
+        sync: false
+      - key: QDRANT_ENDPOINT
+        sync: false
+      - key: QDRANT_COLLECTION
+        value: opportunities
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "6543"
+      - key: DB_NAME
+        value: postgres
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JINA_API_KEY
+        sync: false
+      - key: JINA_ENDPOINT
+        value: https://api.jina.ai/v1/embeddings
+      - key: JINA_MODEL
+        value: jina-embeddings-v3
+      - key: GROK_API
+        sync: false
+      - key: CEREBRAS_API
+        sync: false
+      - key: CORS_ORIGINS
+        value: '["*"]'
