@@ -1,11 +1,15 @@
 import logging
 import sys
+from pathlib import Path
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 
 from config import settings
+
+BASE_DIR = Path(__file__).resolve().parent
 from utils.logger import setup_logging
 from stores import qdrant_store, pg_store
 from helpers.embeddings import close_http_client
@@ -69,6 +73,19 @@ app.include_router(opportunities_router)
 @app.get("/health", tags=["Health"])
 async def health_check():
     return {"status": "ok"}
+
+
+# ── Serve HTML pages ──
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
+@app.get("/index.html", response_class=HTMLResponse, include_in_schema=False)
+async def serve_index():
+    return (BASE_DIR / "index.html").read_text(encoding="utf-8")
+
+
+@app.get("/browse", response_class=HTMLResponse, include_in_schema=False)
+@app.get("/browse.html", response_class=HTMLResponse, include_in_schema=False)
+async def serve_browse():
+    return (BASE_DIR / "browse.html").read_text(encoding="utf-8")
 
 
 # ──────────────────────────────────────────────

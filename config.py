@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     # Qdrant
     qdrant_api_key: str
     qdrant_endpoint: str
-    qdrant_collection: str = "opportunities"
+    qdrant_collection: str = "opportunities_v1"
 
     # PostgreSQL
     db_host: str
@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     # App
     app_env: str = "development"
     log_level: str = "INFO"
-    cors_origins: str = '["http://localhost:5173","http://localhost:3000"]'
+    cors_origins: str = '[*]'
 
     @property
     def cors_origins_list(self) -> List[str]:
