@@ -29,7 +29,8 @@ async def search_opportunities(
     # Step 1: Parse query
     parsed = await understand_query(query)
     logger.info(
-        "Parsed query: semantic='%s', filters=%s",
+        "Original query: '%s' | Parsed query: semantic='%s', filters=%s",
+        query,
         parsed.semantic_query,
         parsed.constraints.model_dump(exclude_none=True, exclude_defaults=True),
     )
