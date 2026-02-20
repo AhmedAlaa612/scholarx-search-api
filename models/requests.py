@@ -26,8 +26,13 @@ class OpportunitiesQueryParams(BaseModel):
     page: int = Field(default=1, ge=1)
     per_page: int = Field(default=12, ge=1, le=50)
 
+    # Title search
+    q: Optional[str] = Field(default=None, max_length=200, description="Title search query (fuzzy/partial match)")
+
     # Optional filters
     category: Optional[str] = Field(default=None, description="academic or non_academic")
     subtype: Optional[str] = Field(default=None, description="masters, bachelor, phd, internship, etc.")
     country: Optional[str] = Field(default=None, description="Filter by country")
     fund_type: Optional[str] = Field(default=None, description="fully_funded or partially_funded")
+    target_segment: Optional[str] = Field(default=None, description="high school, undergraduate, or graduate")
+    is_remote: Optional[bool] = Field(default=None, description="Filter by remote/in-person")

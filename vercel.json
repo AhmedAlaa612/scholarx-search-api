@@ -7,6 +7,10 @@
     {
       "src": "index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "browse.html",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -15,7 +19,15 @@
       "dest": "index.html"
     },
     {
-      "src": "/(.*)",
+      "src": "^/browse(\\.html)?$",
+      "dest": "browse.html"
+    },
+    {
+      "src": "^/api/(.*)",
+      "dest": "main.py"
+    },
+    {
+      "src": "^/health$",
       "dest": "main.py"
     }
   ]

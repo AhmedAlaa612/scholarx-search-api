@@ -22,9 +22,13 @@ async def list_opportunities(
     subtype: Optional[str] = None,
     country: Optional[str] = None,
     fund_type: Optional[str] = None,
+    target_segment: Optional[str] = None,
+    is_remote: Optional[bool] = None,
+    q: Optional[str] = None,
 ) -> OpportunityListResponse:
     """
-    Paginated listing of all opportunities with optional filters.
+    Paginated listing of all opportunities with optional filters
+    and optional title search.
     """
     items, total = await pg_store.list_opportunities(
         lang=lang,
@@ -34,6 +38,9 @@ async def list_opportunities(
         subtype=subtype,
         country=country,
         fund_type=fund_type,
+        target_segment=target_segment,
+        is_remote=is_remote,
+        q=q,
     )
 
     total_pages = ceil(total / per_page) if total > 0 else 0

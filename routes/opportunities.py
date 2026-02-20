@@ -24,10 +24,13 @@ async def get_opportunities(
     lang: Language = Query(default=Language.EN, description="Response language"),
     page: int = Query(default=1, ge=1, description="Page number"),
     per_page: int = Query(default=12, ge=1, le=50, description="Items per page"),
+    q: Optional[str] = Query(default=None, max_length=200, description="Title search (fuzzy/partial match)"),
     category: Optional[str] = Query(default=None, description="academic or non_academic"),
     subtype: Optional[str] = Query(default=None, description="masters, bachelor, phd, internship, etc."),
     country: Optional[str] = Query(default=None, description="Filter by country"),
     fund_type: Optional[str] = Query(default=None, description="fully_funded or partially_funded"),
+    target_segment: Optional[str] = Query(default=None, description="high school, undergraduate, or graduate"),
+    is_remote: Optional[bool] = Query(default=None, description="Filter by remote/in-person"),
 ) -> OpportunityListResponse:
     try:
         result = await list_opportunities(
@@ -38,6 +41,9 @@ async def get_opportunities(
             subtype=subtype,
             country=country,
             fund_type=fund_type,
+            target_segment=target_segment,
+            is_remote=is_remote,
+            q=q,
         )
         return result
     except Exception as e:
