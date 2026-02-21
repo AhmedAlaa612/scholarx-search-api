@@ -29,6 +29,14 @@
     {
       "src": "^/health$",
       "dest": "main.py"
+    },
+    {
+      "src": "^/docs$",
+      "dest": "main.py"
+    },
+    {
+      "src": "^/redoc$",
+      "dest": "main.py"
     }
   ]
 }
