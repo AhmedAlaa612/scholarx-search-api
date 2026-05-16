@@ -25,10 +25,7 @@ class QueryConstraints(BaseModel):
     target_segment: List[str] = Field(default_factory=list, description="high school, undergraduate, graduate")
     documents_not_required: List[str] = Field(default_factory=list, description="Documents user does NOT want required")
     language_score_requirements: Dict[str, float] = Field(default_factory=dict, description="User's exam scores: e.g. {'ielts': 6.5, 'toefl': 90}")
-    eligible_nationalities: List[str] = Field(default_factory=list, description="User nationality to filter eligible opportunities")
     is_remote: Optional[bool] = None
-    min_age: Optional[int] = None
-    max_age: Optional[int] = None
     gpa: Optional[float] = None
     has_document_requirements: Optional[bool] = None
     has_language_requirements: Optional[bool] = None
@@ -45,13 +42,15 @@ class ParsedQuery(BaseModel):
 # ──────────────────────────────────────────────
 
 SYSTEM_PROMPT = """
-You are a query understanding engine for a scholarship search system. Your job is to:
+You are a query understanding engine for a scholarship search system serving Egyptian students.
+Your job is to:
 1. Rewrite the user's query into clear, search-optimized English
 2. Extract structured filters from the query
 3. Return results as valid JSON
 
 DATABASE CONTEXT:
-- All opportunities in the database are currently active (ignore words like "open now", "available", "currently")
+- All opportunities in the database are open to Egyptian nationals — no need to filter by nationality
+- All opportunities are currently active (ignore words like "open now", "available", "currently")
 - Opportunities include both academic (degrees) and non_academic (internships, volunteering, workshops, etc.)
 
 USER INPUT NOTES:
@@ -62,18 +61,18 @@ EXTRACTION RULES:
 
 **semantic_query (rewritten search text):**
 - Rewrite into clear, concise English
-- Remove redundant terms already captured in filters (e.g., "no IELTS" -> don't include in semantic query if has_language_requirements=false)
+- Remove redundant terms already captured in filters
 - Do Not mention language requirements, document requirements, or fees in the semantic query if those are captured in filters
 - Keep the core intent and keywords for semantic search
 
 **category:**
 - "academic" = degree-seeking programs (Bachelor, Masters, PhD)
 - "non_academic" = internships, volunteering, workshops, camps, conferences, exchanges, research programs, short courses
-- OMIT if: user mentions only a program name, query is ambiguous, or could be either type (e.g., "travel opportunities")
+- OMIT if: user mentions only a program name, query is ambiguous, or could be either type
 - if user mentions summer programs they mostly mean non_academic
 
 **subtype:**
-- academic: "bachelor", "masters", "phd"
+- academic: "bachelor", "masters", "phd", "fellowship"
 - non_academic: "internship", "conference", "camp", "volunteering", "workshop", "exchange"
 - ONLY set if user explicitly wants that TYPE of program
 - Do NOT infer from eligibility (e.g., "for undergraduates" ≠ subtype "bachelor")
@@ -96,15 +95,8 @@ EXTRACTION RULES:
 - "partially_funded" = some financial support
 - OMIT if not specified
 
-**eligible_nationalities:**
-- If user mentions their nationality or who the opportunity is for (e.g., "for Egyptians", "as a Jordanian", "for Arab students")
-- Extract country names: "Egypt", "Jordan", etc.
-- This filters opportunities that accept these nationalities (or accept "all")
-- OMIT if not mentioned
-
 **documents_not_required:**
 - If user says "no CV", "without transcript", "IELTS not needed" -> ADD that document to this list
-- This filters for opportunities that do NOT require these documents
 - Common values: "cv", "transcript", "motivation_letter", "recommendation_letter", "language_certificate"
 - OMIT if not mentioned
 
@@ -115,13 +107,11 @@ EXTRACTION RULES:
 - Examples:
   - "IELTS less than 6.5" or "IELTS 6.5" or "my IELTS is 6.5" → {"ielts": 6.5}
   - "TOEFL 90" → {"toefl": 90}
-  - "IELTS 6.5 and TOEFL 90" → {"ielts": 6.5, "toefl": 90}
-- This filters: opportunities requiring that exam with score ≤ user's score, or not requiring that exam at all
 - OMIT if no specific exam+score is mentioned
 - If user says "no IELTS" or "no language requirements" WITHOUT a score, use has_language_requirements: false instead
 
 **has_language_requirements:**
-- false = no language certificate needed at all (overrides language_score_requirements)
+- false = no language certificate needed at all
 - true = language certificate required
 - OMIT if not specified
 
@@ -135,9 +125,8 @@ EXTRACTION RULES:
 - true = documents are required
 - OMIT if not specified
 
-**age & GPA:**
-- Only include if user mentions specific numeric thresholds
-- min_age/max_age: age range
+**gpa:**
+- Only include if user mentions a specific numeric GPA threshold
 - gpa: maximum GPA user has (to find programs they qualify for)
 
 **is_remote:**
@@ -186,30 +175,11 @@ Query: "masters in Germany, my IELTS is 6.5"
   }
 }
 
-Query: "scholarship without CV requirement for a 16 year old"
-{
-  "semantic_query": "scholarship for a 16 year old",
-  "filters": {
-    "documents_not_required": ["cv"],
-    "min_age": 16,
-    "max_age": 16
-  }
-}
-
-Query: "منح للمصريين في اوروبا"
-{
-  "semantic_query": "scholarships in Europe",
-  "filters": {
-    "country": ["Germany", "France", "UK", "Spain", "Italy", "Netherlands"],
-    "eligible_nationalities": ["Egypt"]
-  }
-}
-
 Query: "عايز اتفسح في اوروبا ببلاش"
 {
   "semantic_query": "opportunity in Europe",
   "filters": {
-    "country": ["Germany", "France", "UK", "Spain", "Italy", "Netherlands"],
+    "country": ["Germany", "France", "UK", "Spain", "Italy", "Netherlands" .... rest of European countries],
     "fund_type": ["fully_funded"],
     "category": "non_academic"
   }
@@ -237,11 +207,8 @@ def _build_prompt(user_query: str) -> str:
     "country": ["only if mentioned"],
     "fund_type": ["only if mentioned"],
     "target_segment": ["only if specified"],
-    "eligible_nationalities": ["only if user mentions nationality"],
     "documents_not_required": ["only if user says no X required"],
     "language_score_requirements": {{"exam_name": score_number, "only if user mentions exam + score"}},
-    "min_age": "number - only if mentioned",
-    "max_age": "number - only if mentioned",
     "gpa": "number - only if mentioned",
     "has_document_requirements": "boolean - only if mentioned",
     "has_language_requirements": "boolean - only if mentioned",
@@ -316,10 +283,7 @@ async def _call_llm(user_query: str) -> ParsedQuery | None:
                 target_segment=filters.get("target_segment") or [],
                 documents_not_required=filters.get("documents_not_required") or [],
                 language_score_requirements=filters.get("language_score_requirements") or {},
-                eligible_nationalities=normalize_countries(filters.get("eligible_nationalities") or []),
                 is_remote=filters.get("is_remote"),
-                min_age=filters.get("min_age"),
-                max_age=filters.get("max_age"),
                 gpa=filters.get("gpa"),
                 has_document_requirements=filters.get("has_document_requirements"),
                 has_language_requirements=filters.get("has_language_requirements"),

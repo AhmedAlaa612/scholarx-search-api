@@ -201,6 +201,31 @@ class PostgresStore:
         if isinstance(data, str):
             data = json.loads(data)
         return {"id": row["id"], "data": data}
+    
+    async def log_query(
+        self,
+        query: str,
+        parsed_query: str | None = None,
+        filters: dict | None = None,
+        results_count: int = 0,
+        lang: str = "en",
+    ) -> None:
+        """Insert a search query log entry."""
+        import json
+        try:
+            await self.pool.execute(
+                """
+                INSERT INTO query_logs (query, parsed_query, filters, results_count, lang)
+                VALUES ($1, $2, $3, $4, $5)
+                """,
+                query,
+                parsed_query,
+                json.dumps(filters) if filters else None,
+                results_count,
+                lang,
+            )
+        except Exception as e:
+            logger.warning("Failed to log query: %s", e)
 
 
 # Singleton instance

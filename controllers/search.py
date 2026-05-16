@@ -74,6 +74,14 @@ async def search_opportunities(
                 opportunity=opportunity_data,
             )
         )
+    # step 6: Log query
+    await pg_store.log_query(
+        query=query,
+        parsed_query=parsed.semantic_query,
+        filters=parsed.constraints.model_dump(exclude_none=True, exclude_defaults=True),
+        results_count=len(results),
+        lang=lang,
+    )
 
     return SearchResponse(
         results=results,
