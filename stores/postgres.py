@@ -101,6 +101,7 @@ class PostgresStore:
         # Always exclude expired opportunities
         where_clauses.append("(deadline IS NULL OR deadline >= CURRENT_DATE)")
 
+
         # ── Title search (trigram + ILIKE) ──
         if q:
             where_clauses.append(
