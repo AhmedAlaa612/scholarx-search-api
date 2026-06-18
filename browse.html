@@ -1,0 +1,1196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browse Opportunities</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --white: #ffffff;
+        --baby-blue: #a8d8ea;
+        --baby-blue-light: #c9e9f6;
+        --baby-blue-dark: #7bbfd6;
+        --baby-blue-accent: #5ba3c4;
+        --text-dark: #1a2332;
+        --text-medium: #4a5568;
+        --text-light: #718096;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 2px 8px rgba(168, 216, 234, 0.1);
+        --shadow-md: 0 8px 24px rgba(168, 216, 234, 0.15);
+        --shadow-lg: 0 16px 48px rgba(168, 216, 234, 0.2);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 50%, #e6f4fa 100%);
+        color: var(--text-dark);
+        line-height: 1.6;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Animated background particles */
+      .bg-particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        background: var(--baby-blue-light);
+        border-radius: 50%;
+        opacity: 0.3;
+        animation: float 20s infinite ease-in-out;
+      }
+
+      .particle:nth-child(1) { width: 80px; height: 80px; top: 10%; left: 10%; animation-delay: 0s; }
+      .particle:nth-child(2) { width: 120px; height: 120px; top: 60%; left: 80%; animation-delay: 4s; }
+      .particle:nth-child(3) { width: 60px; height: 60px; top: 80%; left: 20%; animation-delay: 8s; }
+      .particle:nth-child(4) { width: 100px; height: 100px; top: 30%; left: 70%; animation-delay: 12s; }
+
+      @keyframes float {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        25% { transform: translate(20px, -30px) scale(1.1); }
+        50% { transform: translate(-20px, 20px) scale(0.9); }
+        75% { transform: translate(30px, 10px) scale(1.05); }
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 24px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Top bar */
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+        animation: fadeInDown 0.6s ease-out;
+      }
+
+      .nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        background: var(--white);
+        color: var(--baby-blue-accent);
+        border: 2px solid var(--baby-blue);
+        border-radius: 50px;
+        font-family: "Sora", sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .nav-link:hover {
+        background: var(--baby-blue);
+        color: var(--white);
+      }
+
+      .lang-toggle {
+        display: flex;
+        gap: 12px;
+      }
+
+      .lang-btn {
+        padding: 10px 24px;
+        border: 2px solid var(--baby-blue);
+        background: var(--white);
+        color: var(--text-dark);
+        font-family: "Sora", sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .lang-btn.active {
+        background: var(--baby-blue);
+        color: var(--white);
+        border-color: var(--baby-blue-accent);
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeInDown 0.8s ease-out;
+      }
+
+      .header h1 {
+        font-family: "Sora", sans-serif;
+        font-size: 3rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--baby-blue-dark) 0%, var(--baby-blue-accent) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 12px;
+        letter-spacing: -0.02em;
+      }
+
+      .header p {
+        font-size: 1.15rem;
+        color: var(--text-medium);
+      }
+
+      /* Search & Filters Panel */
+      .filters-panel {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 36px;
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 36px;
+        border: 1px solid var(--baby-blue-light);
+        animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .filters-panel::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--baby-blue) 0%, var(--baby-blue-accent) 100%);
+      }
+
+      /* Title search */
+      .search-row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+
+      .search-input {
+        flex: 1;
+        padding: 16px 24px;
+        font-size: 1.05rem;
+        border: 2px solid var(--baby-blue-light);
+        border-radius: 14px;
+        font-family: "DM Sans", sans-serif;
+        transition: all 0.3s ease;
+        background: #fafcfe;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: var(--baby-blue-accent);
+        background: var(--white);
+        box-shadow: 0 0 0 4px rgba(168, 216, 234, 0.1);
+      }
+
+      .search-submit {
+        padding: 16px 32px;
+        background: linear-gradient(135deg, var(--baby-blue) 0%, var(--baby-blue-accent) 100%);
+        color: var(--white);
+        border: none;
+        border-radius: 14px;
+        font-family: "Sora", sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(168, 216, 234, 0.3);
+        white-space: nowrap;
+      }
+
+      .search-submit:hover {
+        transform: scale(1.03);
+        box-shadow: 0 8px 24px rgba(168, 216, 234, 0.4);
+      }
+
+      /* Filters grid */
+      .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .filter-label {
+        font-weight: 600;
+        color: var(--text-dark);
+        font-size: 0.88rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      .filter-select {
+        padding: 11px 14px;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.95rem;
+        background: var(--white);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235ba3c4' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 36px;
+      }
+
+      .filter-select:focus {
+        outline: none;
+        border-color: var(--baby-blue);
+        box-shadow: 0 0 0 3px rgba(168, 216, 234, 0.1);
+      }
+
+      .filters-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+
+      .clear-btn {
+        padding: 10px 24px;
+        background: transparent;
+        color: var(--baby-blue-accent);
+        border: 1px solid var(--baby-blue);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: "Sora", sans-serif;
+      }
+
+      .clear-btn:hover {
+        background: var(--baby-blue-light);
+      }
+
+      /* Results count + per-page */
+      .results-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        animation: fadeInUp 0.5s ease-out;
+      }
+
+      .results-count {
+        font-family: "Sora", sans-serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      .per-page-select {
+        padding: 8px 14px;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.9rem;
+        cursor: pointer;
+        background: var(--white);
+      }
+
+      /* Loading */
+      .loading-container {
+        display: none;
+        text-align: center;
+        padding: 60px 40px;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      .loading-container.active {
+        display: block;
+      }
+
+      .loading-dots {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .loading-dot {
+        width: 14px;
+        height: 14px;
+        background: var(--baby-blue);
+        border-radius: 50%;
+        animation: cookingJump 1.4s infinite ease-in-out;
+      }
+
+      .loading-dot:nth-child(1) { animation-delay: 0s; }
+      .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+      .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+      @keyframes cookingJump {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+      }
+
+      .loading-text {
+        font-family: "Sora", sans-serif;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--baby-blue-accent);
+      }
+
+      /* Results grid */
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+        margin-bottom: 40px;
+      }
+
+      .opportunity-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .opportunity-card::before {
+        content: "";
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(168, 216, 234, 0.1), transparent);
+        transition: left 0.6s;
+      }
+
+      .opportunity-card:hover::before { left: 100%; }
+
+      .opportunity-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--baby-blue);
+      }
+
+      .card-title {
+        font-family: "Sora", sans-serif;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        line-height: 1.3;
+        margin-bottom: 12px;
+      }
+
+      .card-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: var(--baby-blue-light);
+        color: var(--baby-blue-accent);
+        white-space: nowrap;
+      }
+
+      .badge.fully-funded { background: #d1fae5; color: #059669; }
+      .badge.category-badge { background: #ede9fe; color: #7c3aed; }
+      .badge.remote-badge { background: #fef3c7; color: #d97706; }
+
+      .card-description {
+        color: var(--text-medium);
+        margin-bottom: 16px;
+        line-height: 1.7;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        font-size: 0.95rem;
+      }
+
+      .card-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border-color);
+      }
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-medium);
+        font-size: 0.85rem;
+      }
+
+      .meta-icon {
+        width: 16px;
+        height: 16px;
+        color: var(--baby-blue-accent);
+      }
+
+      /* Pagination */
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 32px 0;
+        animation: fadeInUp 0.5s ease-out;
+      }
+
+      .page-btn {
+        padding: 10px 18px;
+        border: 2px solid var(--baby-blue-light);
+        background: var(--white);
+        color: var(--text-dark);
+        font-family: "Sora", sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .page-btn:hover:not(:disabled) {
+        background: var(--baby-blue-light);
+        border-color: var(--baby-blue);
+      }
+
+      .page-btn.active {
+        background: var(--baby-blue);
+        color: var(--white);
+        border-color: var(--baby-blue-accent);
+      }
+
+      .page-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .page-info {
+        font-size: 0.9rem;
+        color: var(--text-medium);
+        padding: 0 12px;
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(26, 35, 50, 0.7);
+        backdrop-filter: blur(8px);
+        z-index: 1000;
+        padding: 40px 20px;
+        overflow-y: auto;
+        animation: fadeIn 0.3s ease-out;
+      }
+
+      .modal.active {
+        display: flex;
+        justify-content: center;
+        align-items: start;
+      }
+
+      .modal-content {
+        background: var(--white);
+        border-radius: 24px;
+        max-width: 900px;
+        width: 100%;
+        margin: auto;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+        animation: slideUp 0.4s ease-out;
+        position: relative;
+      }
+
+      .modal-header {
+        padding: 36px 36px 28px;
+        border-bottom: 2px solid var(--baby-blue-light);
+        position: relative;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 20px; right: 20px;
+        width: 40px; height: 40px;
+        border: none;
+        background: var(--baby-blue-light);
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: var(--baby-blue-accent);
+        transition: all 0.3s ease;
+      }
+
+      .modal-close:hover {
+        background: var(--baby-blue);
+        transform: rotate(90deg);
+      }
+
+      .modal-title {
+        font-family: "Sora", sans-serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 14px;
+        padding-right: 50px;
+      }
+
+      .modal-body {
+        padding: 36px;
+        max-height: 60vh;
+        overflow-y: auto;
+      }
+
+      .modal-section {
+        margin-bottom: 28px;
+      }
+
+      .modal-section-title {
+        font-family: "Sora", sans-serif;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--baby-blue-accent);
+        margin-bottom: 10px;
+      }
+
+      .modal-section-content {
+        color: var(--text-medium);
+        line-height: 1.8;
+      }
+
+      .benefits-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .benefits-list li {
+        padding: 10px 0;
+        padding-left: 28px;
+        position: relative;
+        color: var(--text-medium);
+      }
+
+      .benefits-list li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: var(--baby-blue-accent);
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        background: #f8fbfd;
+        padding: 20px;
+        border-radius: 14px;
+        margin-top: 16px;
+      }
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .info-label {
+        font-size: 0.82rem;
+        color: var(--text-light);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .info-value {
+        font-size: 0.95rem;
+        color: var(--text-dark);
+        font-weight: 500;
+      }
+
+      .modal-actions {
+        padding: 20px 36px;
+        border-top: 2px solid var(--baby-blue-light);
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+      }
+
+      .btn {
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-family: "Sora", sans-serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--baby-blue) 0%, var(--baby-blue-accent) 100%);
+        color: var(--white);
+        box-shadow: 0 4px 16px rgba(168, 216, 234, 0.3);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(168, 216, 234, 0.4);
+      }
+
+      .btn-secondary {
+        background: var(--white);
+        color: var(--baby-blue-accent);
+        border: 2px solid var(--baby-blue);
+      }
+
+      .btn-secondary:hover {
+        background: var(--baby-blue-light);
+      }
+
+      /* Empty state */
+      .empty-state {
+        text-align: center;
+        padding: 80px 40px;
+        color: var(--text-medium);
+      }
+
+      .empty-state svg {
+        width: 80px;
+        height: 80px;
+        color: var(--baby-blue);
+        margin-bottom: 20px;
+      }
+
+      .empty-state h3 {
+        font-family: "Sora", sans-serif;
+        font-size: 1.4rem;
+        margin-bottom: 8px;
+        color: var(--text-dark);
+      }
+
+      /* Animations */
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .header h1 { font-size: 2.2rem; }
+        .filters-panel { padding: 24px; }
+        .search-row { flex-direction: column; }
+        .filters-grid { grid-template-columns: 1fr 1fr; }
+        .results-grid { grid-template-columns: 1fr; }
+        .top-bar { flex-direction: column; gap: 12px; }
+        .modal-header, .modal-body, .modal-actions { padding: 24px; }
+      }
+
+      @media (max-width: 480px) {
+        .filters-grid { grid-template-columns: 1fr; }
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar { width: 10px; }
+      ::-webkit-scrollbar-track { background: var(--baby-blue-light); }
+      ::-webkit-scrollbar-thumb { background: var(--baby-blue); border-radius: 5px; }
+      ::-webkit-scrollbar-thumb:hover { background: var(--baby-blue-accent); }
+    </style>
+  </head>
+  <body>
+    <!-- Background Particles -->
+    <div class="bg-particles">
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+    </div>
+
+    <div class="container">
+      <!-- Top bar -->
+      <div class="top-bar">
+        <a href="index.html" class="nav-link">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+          AI Search
+        </a>
+        <div class="lang-toggle">
+          <button class="lang-btn active" data-lang="en">English</button>
+          <button class="lang-btn" data-lang="ar">العربية</button>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="header">
+        <h1>Browse Opportunities</h1>
+        <p>Explore all scholarships and opportunities with powerful filters</p>
+      </div>
+
+      <!-- Filters Panel -->
+      <div class="filters-panel">
+        <div class="search-row">
+          <input
+            type="text"
+            class="search-input"
+            id="titleSearch"
+            placeholder="Search by title..."
+          />
+          <button class="search-submit" id="searchBtn">Search</button>
+        </div>
+
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label class="filter-label">Category</label>
+            <select class="filter-select" id="filterCategory">
+              <option value="">All Categories</option>
+              <option value="academic">Academic</option>
+              <option value="non_academic">Non-Academic</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Type</label>
+            <select class="filter-select" id="filterSubtype">
+              <option value="">All Types</option>
+              <option value="masters">Masters</option>
+              <option value="bachelor">Bachelor</option>
+              <option value="phd">PhD</option>
+              <option value="conference">Conference</option>
+              <option value="exchange">Exchange</option>
+              <option value="prize">Prize</option>
+              <option value="internship">Internship</option>
+              <option value="camp">Camp</option>
+              <option value="volunteering">Volunteering</option>
+              <option value="workshop">Workshop</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Country</label>
+            <select class="filter-select" id="filterCountry">
+              <option value="">All Countries</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Funding</label>
+            <select class="filter-select" id="filterFunding">
+              <option value="">All Funding</option>
+              <option value="fully_funded">Fully Funded</option>
+              <option value="partially_funded">Partially Funded</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Target Segment</label>
+            <select class="filter-select" id="filterSegment">
+              <option value="">All Segments</option>
+              <option value="high school">High School</option>
+              <option value="undergraduate">Undergraduate</option>
+              <option value="graduate">Graduate</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Remote</label>
+            <select class="filter-select" id="filterRemote">
+              <option value="">Any</option>
+              <option value="true">Remote Only</option>
+              <option value="false">In-Person Only</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filters-actions">
+          <button class="clear-btn" id="clearFilters">Clear All Filters</button>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="loading-container" id="loadingContainer">
+        <div class="loading-dots">
+          <div class="loading-dot"></div>
+          <div class="loading-dot"></div>
+          <div class="loading-dot"></div>
+        </div>
+        <div class="loading-text">Loading opportunities...</div>
+      </div>
+
+      <!-- Results bar -->
+      <div class="results-bar" id="resultsBar" style="display:none">
+        <span class="results-count" id="resultsCount"></span>
+        <div>
+          <label style="font-size:0.9rem;color:var(--text-medium);margin-right:8px;">Per page:</label>
+          <select class="per-page-select" id="perPageSelect">
+            <option value="12">12</option>
+            <option value="24">24</option>
+            <option value="48">48</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Results Grid -->
+      <div class="results-grid" id="resultsGrid"></div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination" style="display:none"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="opportunityModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="modal-close" id="modalClose">&times;</button>
+          <h2 class="modal-title" id="modalTitle"></h2>
+          <div class="card-badges" id="modalBadges"></div>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-actions" id="modalActions"></div>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE = "";
+
+      // ── State ──
+      let currentLang = "en";
+      let currentPage = 1;
+      let perPage = 12;
+      let totalPages = 0;
+      let totalItems = 0;
+      let opportunities = [];
+
+      // ── DOM ──
+      const titleSearch = document.getElementById("titleSearch");
+      const searchBtn = document.getElementById("searchBtn");
+      const filterCategory = document.getElementById("filterCategory");
+      const filterSubtype = document.getElementById("filterSubtype");
+      const filterCountry = document.getElementById("filterCountry");
+      const filterFunding = document.getElementById("filterFunding");
+      const filterSegment = document.getElementById("filterSegment");
+      const filterRemote = document.getElementById("filterRemote");
+      const clearFilters = document.getElementById("clearFilters");
+      const perPageSelect = document.getElementById("perPageSelect");
+      const loadingContainer = document.getElementById("loadingContainer");
+      const resultsBar = document.getElementById("resultsBar");
+      const resultsCount = document.getElementById("resultsCount");
+      const resultsGrid = document.getElementById("resultsGrid");
+      const pagination = document.getElementById("pagination");
+      const modal = document.getElementById("opportunityModal");
+      const modalClose = document.getElementById("modalClose");
+
+      // ── Language toggle ──
+      document.querySelectorAll(".lang-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          document.querySelectorAll(".lang-btn").forEach((b) => b.classList.remove("active"));
+          this.classList.add("active");
+          currentLang = this.dataset.lang;
+          currentPage = 1;
+          fetchOpportunities();
+        });
+      });
+
+      // ── Events ──
+      searchBtn.addEventListener("click", () => { currentPage = 1; fetchOpportunities(); });
+      titleSearch.addEventListener("keypress", (e) => { if (e.key === "Enter") { currentPage = 1; fetchOpportunities(); } });
+
+      [filterCategory, filterSubtype, filterCountry, filterFunding, filterSegment, filterRemote].forEach((el) => {
+        el.addEventListener("change", () => { currentPage = 1; fetchOpportunities(); });
+      });
+
+      perPageSelect.addEventListener("change", () => {
+        perPage = parseInt(perPageSelect.value);
+        currentPage = 1;
+        fetchOpportunities();
+      });
+
+      clearFilters.addEventListener("click", () => {
+        titleSearch.value = "";
+        filterCategory.value = "";
+        filterSubtype.value = "";
+        filterCountry.value = "";
+        filterFunding.value = "";
+        filterSegment.value = "";
+        filterRemote.value = "";
+        currentPage = 1;
+        fetchOpportunities();
+      });
+
+      // ── Fetch ──
+      async function fetchOpportunities() {
+        loadingContainer.classList.add("active");
+        resultsBar.style.display = "none";
+        resultsGrid.innerHTML = "";
+        pagination.style.display = "none";
+
+        const params = new URLSearchParams();
+        params.set("lang", currentLang);
+        params.set("page", currentPage);
+        params.set("per_page", perPage);
+
+        if (titleSearch.value.trim()) params.set("q", titleSearch.value.trim());
+        if (filterCategory.value) params.set("category", filterCategory.value);
+        if (filterSubtype.value) params.set("subtype", filterSubtype.value);
+        if (filterCountry.value) params.set("country", filterCountry.value);
+        if (filterFunding.value) params.set("fund_type", filterFunding.value);
+        if (filterSegment.value) params.set("target_segment", filterSegment.value);
+        if (filterRemote.value) params.set("is_remote", filterRemote.value);
+
+        try {
+          const res = await fetch(`${API_BASE}/api/opportunities?${params.toString()}`);
+          if (!res.ok) throw new Error(`API error: ${res.status}`);
+          const data = await res.json();
+
+          opportunities = data.opportunities.map((item) => ({ _id: item.id, ...item.data }));
+          totalItems = data.pagination.total;
+          totalPages = data.pagination.total_pages;
+          currentPage = data.pagination.page;
+
+          loadingContainer.classList.remove("active");
+          resultsBar.style.display = "flex";
+          renderResults();
+          renderPagination();
+        } catch (err) {
+          loadingContainer.classList.remove("active");
+          console.error("Fetch failed:", err);
+          resultsBar.style.display = "flex";
+          resultsCount.textContent = "";
+          resultsGrid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>Something went wrong</h3><p>Please try again later.</p></div>`;
+        }
+      }
+
+      // ── Helpers ──
+      function arr(v) { return Array.isArray(v) ? v : []; }
+      function str(v) { return v ?? ""; }
+      function obj(v) { return v && typeof v === "object" && !Array.isArray(v) ? v : {}; }
+
+      function formatDate(d) {
+        if (!d) return "N/A";
+        const date = new Date(d);
+        if (isNaN(date)) return d;
+        return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      }
+
+      // ── Render Results ──
+      function renderResults() {
+        resultsCount.textContent = `${totalItems} Opportunit${totalItems === 1 ? "y" : "ies"} Found`;
+
+        if (opportunities.length === 0) {
+          resultsGrid.innerHTML = `
+            <div class="empty-state" style="grid-column:1/-1">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <h3>No opportunities found</h3>
+              <p>Try adjusting your filters or search query.</p>
+            </div>`;
+          return;
+        }
+
+        resultsGrid.innerHTML = opportunities.map((opp, i) => {
+          const type = obj(opp.type);
+          const subtypes = arr(type.subtype);
+          const fundType = arr(opp.fund_type);
+          const countries = arr(opp.country);
+
+          return `
+            <div class="opportunity-card" onclick="showModal(${i})">
+              <h3 class="card-title">${str(opp.title)}</h3>
+              <div class="card-badges">
+                ${type.category ? `<span class="badge category-badge">${type.category}</span>` : ""}
+                ${subtypes.map((t) => `<span class="badge">${t}</span>`).join("")}
+                ${fundType.includes("fully_funded") ? '<span class="badge fully-funded">Fully Funded</span>' : ""}
+                ${opp.is_remote ? '<span class="badge remote-badge">Remote</span>' : ""}
+              </div>
+              <p class="card-description">${str(opp.description)}</p>
+              <div class="card-meta">
+                ${countries.length ? `
+                  <div class="meta-item">
+                    <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    <span>${countries.join(", ")}</span>
+                  </div>` : ""}
+                ${opp.deadline ? `
+                  <div class="meta-item">
+                    <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <span>${formatDate(opp.deadline)}</span>
+                  </div>` : ""}
+                ${arr(opp.target_segment).length ? `
+                  <div class="meta-item">
+                    <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                    </svg>
+                    <span>${arr(opp.target_segment).join(", ")}</span>
+                  </div>` : ""}
+              </div>
+            </div>`;
+        }).join("");
+      }
+
+      // ── Pagination ──
+      function renderPagination() {
+        if (totalPages <= 1) { pagination.style.display = "none"; return; }
+        pagination.style.display = "flex";
+
+        let html = "";
+
+        // Prev
+        html += `<button class="page-btn" ${currentPage <= 1 ? "disabled" : ""} onclick="goToPage(${currentPage - 1})">&laquo; Prev</button>`;
+
+        // Page numbers
+        const maxVisible = 7;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+        if (endPage - startPage + 1 < maxVisible) startPage = Math.max(1, endPage - maxVisible + 1);
+
+        if (startPage > 1) {
+          html += `<button class="page-btn" onclick="goToPage(1)">1</button>`;
+          if (startPage > 2) html += `<span class="page-info">...</span>`;
+        }
+
+        for (let p = startPage; p <= endPage; p++) {
+          html += `<button class="page-btn ${p === currentPage ? "active" : ""}" onclick="goToPage(${p})">${p}</button>`;
+        }
+
+        if (endPage < totalPages) {
+          if (endPage < totalPages - 1) html += `<span class="page-info">...</span>`;
+          html += `<button class="page-btn" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+        }
+
+        // Next
+        html += `<button class="page-btn" ${currentPage >= totalPages ? "disabled" : ""} onclick="goToPage(${currentPage + 1})">Next &raquo;</button>`;
+
+        pagination.innerHTML = html;
+      }
+
+      function goToPage(p) {
+        if (p < 1 || p > totalPages) return;
+        currentPage = p;
+        fetchOpportunities();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      window.goToPage = goToPage;
+
+      // ── Modal ──
+      function showModal(index) {
+        const opp = opportunities[index];
+        const type = obj(opp.type);
+        const subtypes = arr(type.subtype);
+        const fundType = arr(opp.fund_type);
+        const benefits = arr(opp.benefits);
+        const docsRequired = arr(opp.documents_required);
+        const langReqs = obj(opp.language_requirements);
+        const eligNat = opp.eligible_nationalities;
+
+        document.getElementById("modalTitle").textContent = str(opp.title);
+        document.getElementById("modalBadges").innerHTML =
+          subtypes.map((t) => `<span class="badge">${t}</span>`).join("") +
+          (fundType.includes("fully_funded") ? '<span class="badge fully-funded">Fully Funded</span>' : "");
+
+        document.getElementById("modalBody").innerHTML = `
+          <div class="modal-section">
+            <h4 class="modal-section-title">Description</h4>
+            <p class="modal-section-content">${str(opp.description)}</p>
+          </div>
+
+          ${benefits.length ? `
+          <div class="modal-section">
+            <h4 class="modal-section-title">Benefits</h4>
+            <ul class="benefits-list">${benefits.map((b) => `<li>${b}</li>`).join("")}</ul>
+          </div>` : ""}
+
+          ${opp.eligibility ? `
+          <div class="modal-section">
+            <h4 class="modal-section-title">Eligibility</h4>
+            <p class="modal-section-content">${opp.eligibility}</p>
+          </div>` : ""}
+
+          <div class="info-grid">
+            ${opp.duration ? `<div class="info-item"><span class="info-label">Duration</span><span class="info-value">${opp.duration}</span></div>` : ""}
+            ${opp.deadline ? `<div class="info-item"><span class="info-label">Deadline</span><span class="info-value">${formatDate(opp.deadline)}</span></div>` : ""}
+            ${opp.location ? `<div class="info-item"><span class="info-label">Location</span><span class="info-value">${opp.location}</span></div>` : ""}
+            ${opp.gpa ? `<div class="info-item"><span class="info-label">Min GPA</span><span class="info-value">${opp.gpa}</span></div>` : ""}
+            ${opp.is_remote != null ? `<div class="info-item"><span class="info-label">Remote</span><span class="info-value">${opp.is_remote ? "Yes" : "No"}</span></div>` : ""}
+            <div class="info-item">
+              <span class="info-label">Eligible Nationalities</span>
+              <span class="info-value">${eligNat === "all" ? "All" : Array.isArray(eligNat) ? eligNat.join(", ") : str(eligNat)}</span>
+            </div>
+          </div>
+
+          ${Object.keys(langReqs).length > 0 ? `
+          <div class="modal-section" style="margin-top:24px">
+            <h4 class="modal-section-title">Language Requirements</h4>
+            <div class="info-grid">
+              ${Object.entries(langReqs).map(([exam, score]) => `<div class="info-item"><span class="info-label">${exam}</span><span class="info-value">${score}</span></div>`).join("")}
+            </div>
+          </div>` : ""}
+
+          ${docsRequired.length ? `
+          <div class="modal-section">
+            <h4 class="modal-section-title">Required Documents</h4>
+            <ul class="benefits-list">${docsRequired.map((doc) => `<li>${doc}</li>`).join("")}</ul>
+          </div>` : ""}
+        `;
+
+        // Actions
+        document.getElementById("modalActions").innerHTML = `
+          ${opp.application_link ? `<a href="${opp.application_link}" target="_blank" rel="noopener" class="btn btn-primary">Apply Now &rarr;</a>` : ""}
+          ${opp.source_url ? `<a href="${opp.source_url}" target="_blank" rel="noopener" class="btn btn-secondary">View Source</a>` : ""}
+        `;
+
+        modal.classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+      window.showModal = showModal;
+
+      modalClose.addEventListener("click", closeModal);
+      modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+      function closeModal() {
+        modal.classList.remove("active");
+        document.body.style.overflow = "auto";
+      }
+
+      // ── Init: load first page ──
+      fetchOpportunities();
+    </script>
+  </body>
+</html>
